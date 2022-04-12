@@ -5,7 +5,16 @@ class Snake {
 
 }
 
-const snake = new Snake()
 
+class Balls {
+    constructor() {
+        this.mainBall = { x: 20, y: 20, r: 10, s: 0, e: 2 * Math.PI }
+        this.bonusBall = { x: 20, y: 20, r: 10, s: 0, e: 2 * Math.PI }
+    }
+}
+const snake = new Snake()
+const balls = new Balls()
+
+export { balls }
 export default snake
 
