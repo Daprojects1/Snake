@@ -59,12 +59,18 @@ class GameBoard {
         return this.move()
     }
     hitBall = () => {
-        const leftBallHeight = this.snake.body[0].y >= balls.mainBall.y
-        const rightBallHeight = this.snake.body[0].y <= balls.mainBall.y + 10
-        const bottomBallwidth = this.snake.body[0].x <= balls.mainBall.x + 10
-        const topBallwidth = this.snake.body[0].x >= balls.mainBall.x
+        const topLeftBall = { x: this.balls.mainBall.x, y: this.balls.mainBall.y }
+        const topRightBall = { x: this.balls.mainBall.x + 10, Y: this.balls.mainBall.y }
+        const bottomLeftBall = { x: this.balls.mainBall.x, y: this.balls.mainBall.y + 10 }
+        const bottomRighBall = { x: this.balls.mainBall.x + 10, y: this.balls.mainBall.x + 10 }
+
+        const checkPoints = [topLeftBall, topRightBall, bottomLeftBall, bottomRighBall]
+
+        checkPoints.map(item => {
+
+        })
         // check which wall is being hit. 
-        if (leftBallHeight && rightBallHeight && bottomBallwidth && topBallwidth) console.log("yeah")
+
     }
     changeDirection = () => {
         document.addEventListener("keydown", (e) => {
