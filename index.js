@@ -9,7 +9,7 @@ class GameBoard {
         this.ctx = document.querySelector("canvas").getContext("2d")
         this.snake = snake
         this.balls = balls
-        this.XgameSpeed = 10
+        this.XgameSpeed = 0
         this.YgameSpeed = 0
         this.maxSpeed = 10
     }
@@ -42,7 +42,7 @@ class GameBoard {
         body.unshift(head)
         body.pop();
     }
-    checkForHit = () => {
+    stopOrMove = () => {
         for (let i = 0; i < snake.body.length; i++) {
             let { x, y } = snake.body[i]
             let leftWall = x <= 0
@@ -57,6 +57,14 @@ class GameBoard {
             }
         }
         return this.move()
+    }
+    hitBall = () => {
+        const leftBallHeight = this.snake.body[0].y >= balls.mainBall.y
+        const rightBallHeight = this.snake.body[0].y <= balls.mainBall.y + 10
+        const bottomBallwidth = this.snake.body[0].x <= balls.mainBall.x + 10
+        const topBallwidth = this.snake.body[0].x >= balls.mainBall.x
+        // check which wall is being hit. 
+        if (leftBallHeight && rightBallHeight && bottomBallwidth && topBallwidth) console.log("yeah")
     }
     changeDirection = () => {
         document.addEventListener("keydown", (e) => {
@@ -93,7 +101,8 @@ class GameBoard {
     runGame = () => {
         setTimeout(() => {
             this.clearScreen()
-            this.checkForHit()
+            this.stopOrMove()
+            this.hitBall()
             this.changeDirection()
             this.showSnake()
             this.createBall()
