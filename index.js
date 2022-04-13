@@ -1,40 +1,24 @@
 import snake from "./snake.js"
-import { balls } from "./snake.js"
+import balls from "./ball.js"
 import getRandomInt from "./randomInt.js"
+import toggleValue from "./toggle.js"
 
 
 
 class GameBoard {
-    constructor(snake, balls) {
+    constructor() {
         this.ctx = document.querySelector("canvas").getContext("2d")
         this.snake = snake
         this.balls = balls
         this.XgameSpeed = 0
         this.YgameSpeed = 0
         this.maxSpeed = 10
+        this.ballEaten = false
+        this.gameStarted = 0;
+        this.randomBallPos = {x:30,y:30}
     }
     clearScreen = () => {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
-    }
-    createBall = () => {
-        let mainBall = balls.mainBall
-        this.ctx.beginPath()
-        this.ctx.arc(mainBall.x, mainBall.y, mainBall.r, mainBall.s, mainBall.e)
-        this.ctx.fillStyle = "red"
-        this.ctx.fill()
-        this.ctx.stroke()
-        this.ctx.closePath()
-    }
-
-    showSnake = () => {
-        this.snake.body.map(body => {
-            this.ctx.beginPath()
-            this.ctx.rect(body.x, body.y, 10, 10)
-            this.ctx.fillStyle = "green"
-            this.ctx.stroke()
-            this.ctx.fill()
-            this.ctx.closePath()
-        })
     }
     move = () => {
         const { body } = this.snake
@@ -42,9 +26,18 @@ class GameBoard {
         body.unshift(head)
         body.pop();
     }
+    createRandomInt = () => {
+        let size = 10;
+        if (!this.gameStarted || this.ballEaten) {        
+            const x = getRandomInt(snake.body[0].x + size, this.ctx.canvas.width-size)
+            const y = getRandomInt(snake.body[0].y + size, this.ctx.canvas.height-size)
+            this.randomBallPos.x = x
+            this.randomBallPos.y =y
+        }
+    }
     stopOrMove = () => {
-        for (let i = 0; i < snake.body.length; i++) {
-            let { x, y } = snake.body[i]
+        for (let i = 0; i < this.snake.body.length; i++) {
+            let { x, y } = this.snake.body[i]
             let leftWall = x <= 0
             let topWall = y <= 0
             let rightWall = x >= (this.ctx.canvas.width - 10)
@@ -58,19 +51,18 @@ class GameBoard {
         }
         return this.move()
     }
-    hitBall = () => {
-        const topLeftBall = { x: this.balls.mainBall.x, y: this.balls.mainBall.y }
-        const topRightBall = { x: this.balls.mainBall.x + 10, Y: this.balls.mainBall.y }
-        const bottomLeftBall = { x: this.balls.mainBall.x, y: this.balls.mainBall.y + 10 }
-        const bottomRighBall = { x: this.balls.mainBall.x + 10, y: this.balls.mainBall.x + 10 }
-
-        const checkPoints = [topLeftBall, topRightBall, bottomLeftBall, bottomRighBall]
-
-        checkPoints.map(item => {
-
-        })
-        // check which wall is being hit. 
-
+    canCreateBall = () => {
+        if (this.ballEaten) {
+            setTimeout(() => {
+                this.toggleBallEaten(false)
+            }, 500)
+        } else {
+            this.balls.createBall(this.ctx, this.randomBallPos)
+        }
+    }
+    toggleBallEaten = (bool) => {
+        if (typeof bool === "boolean")
+        this.ballEaten = bool
     }
     changeDirection = () => {
         document.addEventListener("keydown", (e) => {
@@ -105,19 +97,23 @@ class GameBoard {
         }, { once: true })
     }
     runGame = () => {
+        const { canCreateBall, hitBall } = this.balls
+        const { showSnake } = this.snake
         setTimeout(() => {
             this.clearScreen()
+            showSnake(this.ctx)
             this.stopOrMove()
-            this.hitBall()
             this.changeDirection()
-            this.showSnake()
-            this.createBall()
+            this.createRandomInt()
+            this.canCreateBall()
+            hitBall(this.snake, this.toggleBallEaten)
+            this.gameStarted=1
             this.runGame();
         }, 100)
     }
-    static start = (snake, balls) => {
-        new GameBoard(snake, balls).runGame()
+    static start = () => {
+        new GameBoard().runGame()
     }
 }
 
-GameBoard.start(snake, balls)
+GameBoard.start()
