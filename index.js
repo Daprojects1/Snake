@@ -3,6 +3,14 @@ import balls from "./ball.js"
 import getRandomInt from "./randomInt.js"
 
 const scoreSpan = document.querySelector(".score-span")
+const highScore = document.querySelector(".high-score")
+
+const getHighScore = () => {
+    const score = localStorage.getItem("highScore") || 0
+    return score
+}
+
+highScore.innerHTML = getHighScore()
 
 class GameBoard {
     constructor() {
@@ -44,6 +52,7 @@ class GameBoard {
         this.YgameSpeed = 0
         this.maxSpeed = 0
         this.gameStopped = true;
+        
     }
     stopOrMove = () => {
         for (let i = 0; i < this.snake.body.length; i++) {
@@ -77,7 +86,12 @@ class GameBoard {
     }
     changeScore = (val)=> {
         this.score += val
-        scoreSpan.innerHTML=this.score
+        scoreSpan.innerHTML = this.score
+        if (this.score > getHighScore()) {
+            
+            localStorage.setItem("highScore", this.score)
+        }
+        highScore.innerHTML = getHighScore()
     }
     canCreateBall = () => {
         if (this.ballEaten) {
