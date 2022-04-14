@@ -1,9 +1,8 @@
 import snake from "./snake.js"
 import balls from "./ball.js"
 import getRandomInt from "./randomInt.js"
-import toggleValue from "./toggle.js"
 
-
+const scoreSpan = document.querySelector(".score-span")
 
 class GameBoard {
     constructor() {
@@ -15,25 +14,36 @@ class GameBoard {
         this.maxSpeed = 10
         this.ballEaten = false
         this.gameStarted = 0;
-        this.randomBallPos = {x:30,y:30}
+        this.randomBallPos = { x: 30, y: 30 }
+        this.currentBall = 0
+        this.score = 0
+        this.gameStopped = false
     }
     clearScreen = () => {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
     }
     move = () => {
-        const { body } = this.snake
-        const head = { x: body[0].x + this.XgameSpeed, y: body[0].y + this.YgameSpeed };
-        body.unshift(head)
-        body.pop();
+        if (!this.gameStopped) {     
+            const { body } = this.snake
+            const head = { x: body[0].x + this.XgameSpeed, y: body[0].y + this.YgameSpeed };
+            body.unshift(head)
+            body.pop();
+        }
     }
     createRandomInt = () => {
         let size = 10;
         if (!this.gameStarted || this.ballEaten) {        
-            const x = getRandomInt(snake.body[0].x + size, this.ctx.canvas.width-size)
-            const y = getRandomInt(snake.body[0].y + size, this.ctx.canvas.height-size)
+            const x = getRandomInt(0 + size, this.ctx.canvas.width-size)
+            const y = getRandomInt(0 + size, this.ctx.canvas.height-size)
             this.randomBallPos.x = x
             this.randomBallPos.y =y
         }
+    }
+    stopGame = () => {
+        this.XgameSpeed = 0
+        this.YgameSpeed = 0
+        this.maxSpeed = 0
+        this.gameStopped = true;
     }
     stopOrMove = () => {
         for (let i = 0; i < this.snake.body.length; i++) {
@@ -43,21 +53,50 @@ class GameBoard {
             let rightWall = x >= (this.ctx.canvas.width - 10)
             let bottomWall = y >= (this.ctx.canvas.height - 10)
             if (leftWall || topWall || rightWall || bottomWall) {
-                this.XgameSpeed = 0
-                this.YgameSpeed = 0
-                this.maxSpeed = 0
+                this.stopGame()
                 return null
             }
         }
+        const { x, y } = this.snake.body[0]
+        const {body} = this.snake
+        for (let i = 1; i < body.length; i++){
+            if (this.score && x === body[i].x && y === body[i].y) {
+                this.stopGame()   
+            }
+        }
         return this.move()
+    }
+    pushSnake = () => {
+        const { body } = this.snake
+        let i = body.length-1
+        const tail = { x: body[i].x, y: body[i].y }
+        body.push(tail)
+        if (this.currentBall === 0)
+            this.changeScore(2)
+        else this.changeScore(4)
+    }
+    changeScore = (val)=> {
+        this.score += val
+        scoreSpan.innerHTML=this.score
     }
     canCreateBall = () => {
         if (this.ballEaten) {
             setTimeout(() => {
                 this.toggleBallEaten(false)
-            }, 500)
+            }, 100)
+            this.pushSnake()
+            return
         } else {
-            this.balls.createBall(this.ctx, this.randomBallPos)
+            let mainBall = { ball: this.balls.mainBall, color: "red" }
+            let bonusBall = { ball: this.balls.bonusBall, color: "purple" }
+            if (this.score > 1 && this.score % 10 === 0) {
+                 this.currentBall = 1
+                this.balls.createBall(this.ctx, this.randomBallPos, bonusBall)
+            } else {
+                this.currentBall = 0
+                this.balls.createBall(this.ctx,this.randomBallPos,mainBall)
+            }
+            
         }
     }
     toggleBallEaten = (bool) => {
@@ -97,7 +136,7 @@ class GameBoard {
         }, { once: true })
     }
     runGame = () => {
-        const { canCreateBall, hitBall } = this.balls
+        const { hitBall } = this.balls
         const { showSnake } = this.snake
         setTimeout(() => {
             this.clearScreen()

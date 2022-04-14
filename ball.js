@@ -1,25 +1,26 @@
 class Balls {
     constructor() {
         this.mainBall = { x: 200, y: 80, r: 10, s: 0, e: 2 * Math.PI }
-        this.bonusBall = { x: 20, y: 20, r: 7, s: 0, e: 2 * Math.PI }
+        this.bonusBall = { x: 250, y: 80, r: 25, s: 0, e: 2 * Math.PI }
+        this.currentBall =null
     }
-    createBall = (ctx, ballPos) => {
-        this.mainBall.x = ballPos.x
-        this.mainBall.y = ballPos.y
+    createBall = (ctx, ballPos, ballType) => {
+        ballType.ball.x = ballPos.x
+        ballType.ball.y = ballPos.y
         ctx.beginPath()
-        ctx.arc(this.mainBall.x, this.mainBall.y, this.mainBall.r, this.mainBall.s, this.mainBall.e)
-        ctx.fillStyle = "red"
+        ctx.arc(ballType.ball.x, ballType.ball.y, ballType.ball.r, ballType.ball.s, ballType.ball.e)
+        ctx.fillStyle = ballType.color
         ctx.fill()
         ctx.stroke()
         ctx.closePath()
+        this.currentBall = ballType.ball
     }
+
     hitBall = (snake, toggleBallEaten) => {
         const {body } = snake
-        const width = 10
-
-        const leftOrRight = body[0].x >= this.mainBall.x-width && body[0].x <= this.mainBall.x + width
-        const topOrBottom = body[0].y >= this.mainBall.y-width && body[0].y <= this.mainBall.y + width
-        
+        const width = this.currentBall.r
+        const leftOrRight = body[0].x >= this.currentBall.x-width-5 && body[0].x <= this.currentBall.x + width
+        const topOrBottom = body[0].y >= this.currentBall.y-width-5 && body[0].y <= this.currentBall.y + width
         if (leftOrRight && topOrBottom) toggleBallEaten(true)
         // check which wall is being hit. 
     }
