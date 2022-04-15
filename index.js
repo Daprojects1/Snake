@@ -21,11 +21,11 @@ class GameBoard {
         this.YgameSpeed = 0
         this.maxSpeed = 10
         this.ballEaten = false
-        this.gameStarted = 0;
         this.randomBallPos = { x: 30, y: 30 }
         this.currentBall = 0
-        this.score = 0
+        this.gameStarted = 0;
         this.gameStopped = false
+        this.score = 0
     }
     clearScreen = () => {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
@@ -68,8 +68,8 @@ class GameBoard {
                 return null
             }
         }
-        const { x, y } = this.snake.body[0]
-        const {body} = this.snake
+        const { body } = this.snake
+        const {x,y} = body[0]
         for (let i = 1; i < body.length; i++){
             if (this.score && x === body[i].x && y === body[i].y) {
                 this.stopGame()   
@@ -77,35 +77,39 @@ class GameBoard {
         }
         return this.move()
     }
-    pushSnake = () => {
-        const { body } = this.snake
-        let i = body.length-1
-        const tail = { x: body[i].x, y: body[i].y }
-        body.push(tail)
+    pushSnake = (num) => {
+        for (let i = 0; i < num; i++){
+            const { body } = this.snake
+            let i = body.length-1
+            const tail = { x: body[i].x, y: body[i].y }
+            body.push(tail)
+        }
         if (this.currentBall === 0)
-            this.changeScore(2)
+        this.changeScore(2)
         else this.changeScore(4)
     }
     changeScore = (val)=> {
         this.score += val
         scoreSpan.innerHTML = this.score
         if (this.score > getHighScore()) {
-            
             localStorage.setItem("highScore", this.score)
         }
         highScore.innerHTML = getHighScore()
     }
     canCreateBall = () => {
+        const bonusBallCheck = this.score > 1 && this.score % 10 === 0
         if (this.ballEaten) {
             setTimeout(() => {
                 this.toggleBallEaten(false)
             }, 100)
-            this.pushSnake()
+           if (bonusBallCheck)
+               this.pushSnake(2)
+            else this.pushSnake(1)
             return
         } else {
             let mainBall = { ball: this.balls.mainBall, color: "red" }
             let bonusBall = { ball: this.balls.bonusBall, color: "purple" }
-            if (this.score > 1 && this.score % 10 === 0) {
+            if (bonusBallCheck) {
                  this.currentBall = 1
                 this.balls.createBall(this.ctx, this.randomBallPos, bonusBall)
             } else {
