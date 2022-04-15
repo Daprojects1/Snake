@@ -19,8 +19,8 @@ class Balls {
     hitBall = (snake, toggleBallEaten) => {
         const {body } = snake
         const width = this.currentBall.r
-        const leftOrRight = body[0].x >= this.currentBall.x-width-5 && body[0].x <= this.currentBall.x + width
-        const topOrBottom = body[0].y >= this.currentBall.y-width-5 && body[0].y <= this.currentBall.y + width
+        const leftOrRight = body[0].x >= this.currentBall.x-width-10 && body[0].x <= this.currentBall.x + width
+        const topOrBottom = body[0].y >= this.currentBall.y-width-10 && body[0].y <= this.currentBall.y + width
         if (leftOrRight && topOrBottom) toggleBallEaten(true)
         // check which wall is being hit. 
     }
