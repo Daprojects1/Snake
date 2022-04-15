@@ -52,7 +52,9 @@ class GameBoard {
         this.YgameSpeed = 0
         this.maxSpeed = 0
         this.gameStopped = true;
-        
+        setTimeout(() => {
+            this.endGameModal()
+        },500)
     }
     stopOrMove = () => {
         for (let i = 0; i < this.snake.body.length; i++) {
@@ -110,7 +112,6 @@ class GameBoard {
                 this.currentBall = 0
                 this.balls.createBall(this.ctx,this.randomBallPos,mainBall)
             }
-            
         }
     }
     toggleBallEaten = (bool) => {
@@ -149,19 +150,37 @@ class GameBoard {
             }
         }, { once: true })
     }
+    endGameModal = () => {
+        const body = document.querySelector("body")
+        const mainDiv = document.querySelector(".main-div")
+        const modal = document.createElement("div")
+        const btn = document.createElement("button")
+        btn.innerText = "Restart"
+        btn.addEventListener("click", ()=> location.reload())
+        mainDiv.innerHTML=""
+        modal.classList.add("modal")
+        modal.appendChild(btn)
+        body.appendChild(modal)        
+    }
+    snakeMovementLogic = () => {
+        this.snake.showSnake(this.ctx)        
+        this.stopOrMove()
+        this.changeDirection()
+    }
+    ballMovementLogic = () => {
+        this.createRandomInt()
+        this.canCreateBall()
+        this.balls.hitBall(this.snake, this.toggleBallEaten)
+    }
     runGame = () => {
-        const { hitBall } = this.balls
-        const { showSnake } = this.snake
         setTimeout(() => {
+            this.gameStarted = 1
             this.clearScreen()
-            showSnake(this.ctx)
-            this.stopOrMove()
-            this.changeDirection()
-            this.createRandomInt()
-            this.canCreateBall()
-            hitBall(this.snake, this.toggleBallEaten)
-            this.gameStarted=1
-            this.runGame();
+            this.snakeMovementLogic()
+            this.ballMovementLogic()
+            if (!this.gameStopped) {
+                this.runGame();
+            }
         }, 100)
     }
     static start = () => {
