@@ -39,7 +39,7 @@ class GameBoard {
         }
     }
     createRandomInt = () => {
-        let size = 10;
+        let size = 10*2;
         if (!this.gameStarted || this.ballEaten) {        
             const x = getRandomInt(0 + size, this.ctx.canvas.width-size)
             const y = getRandomInt(0 + size, this.ctx.canvas.height-size)
@@ -159,11 +159,14 @@ class GameBoard {
         const mainDiv = document.querySelector(".main-div")
         const modal = document.createElement("div")
         const btn = document.createElement("button")
+        const h1 = document.createElement("h1")
         btn.innerText = "Restart"
         btn.addEventListener("click", ()=> location.reload())
-        mainDiv.innerHTML=""
+        mainDiv.innerHTML = ""
+        h1.innerText = "Game Over"
         modal.classList.add("modal")
         modal.appendChild(btn)
+        modal.appendChild(h1)
         body.appendChild(modal)        
     }
     snakeMovementLogic = () => {
@@ -177,8 +180,8 @@ class GameBoard {
         this.balls.hitBall(this.snake, this.toggleBallEaten)
     }
     runGame = () => {
+        this.gameStarted = 1
         setTimeout(() => {
-            this.gameStarted = 1
             this.clearScreen()
             this.snakeMovementLogic()
             this.ballMovementLogic()
