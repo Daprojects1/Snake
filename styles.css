@@ -15,10 +15,13 @@ canvas {
     position: relative;
 }
 
-
+.main-h1{
+    font-size: 25px;
+}
 .main-body p{
     text-align: center;
     width: 300px;
+    margin: 10px 5px;
 }
 
 .modal{
@@ -39,6 +42,9 @@ canvas {
     opacity: 1;
 }
 
+.score{
+    font-size: 20px;
+}
 .restart{
     width: 200px;
     height: 50px;
