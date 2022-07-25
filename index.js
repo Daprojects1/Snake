@@ -26,6 +26,8 @@ class GameBoard {
         this.gameStarted = 0;
         this.gameStopped = false
         this.score = 0
+        this.mobileControls = document.querySelectorAll('.control')
+        this.interval=null
     }
     clearScreen = () => {
         this.ctx.clearRect(0, 0, this.ctx.canvas.width, this.ctx.canvas.height)
@@ -154,13 +156,44 @@ class GameBoard {
             }
         }, { once: true })
     }
+    mobileChangeDir = () => {
+        this.mobileControls.forEach(control => {
+            control.addEventListener('click', () => {
+                const id = control.getAttribute('id')
+                if (id === 'left') {
+                    if (this.XgameSpeed === 0) {
+                        this.YgameSpeed = 0
+                        this.XgameSpeed = -this.maxSpeed
+                    }
+                } else if (id === 'right') {
+                    if (this.XgameSpeed === 0) {
+                        this.YgameSpeed = 0
+                        this.XgameSpeed = this.maxSpeed
+                    }
+                } else if (id === 'top') {
+                    if (this.YgameSpeed === 0) {
+                        this.XgameSpeed = 0
+                        this.YgameSpeed = -this.maxSpeed
+                    }
+                } else if (id === 'bottom') {
+                    if (this.YgameSpeed === 0) {
+                        this.XgameSpeed = 0
+                        this.YgameSpeed = this.maxSpeed
+                    }
+                }
+            },{once:true})
+        })
+
+    }
     endGameModal = () => {
         const body = document.querySelector("body")
         const mainDiv = document.querySelector(".main-div")
         const modal = document.createElement("div")
         const btn = document.createElement("button")
         const h1 = document.createElement("h1")
+        document.querySelector('.controls').classList.add('none')
         btn.innerText = "Restart"
+        btn.classList.add('restart')
         btn.addEventListener("click", ()=> location.reload())
         mainDiv.innerHTML = ""
         h1.innerText = "Game Over"
@@ -173,6 +206,7 @@ class GameBoard {
         this.snake.showSnake(this.ctx)        
         this.stopOrMove()
         this.changeDirection()
+        this.mobileChangeDir()
     }
     ballMovementLogic = () => {
         this.createRandomInt()
