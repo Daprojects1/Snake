@@ -64,7 +64,7 @@ canvas {
 }
 
 .controls{
-    margin-top: 20px;
+    margin-top: 10px;
     display: grid;
     width: 50px;
     grid-template-rows: 0.5fr 0.5fr;
@@ -73,19 +73,35 @@ canvas {
 }
 .controls div{
     border: 1px solid black;
-    padding: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 45px;
+    width: 45px;
 }
 
+.control span{
+    /* position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto; */
+}
 .right{
     transform: rotate(180deg);
     position: absolute;
-    top: 60px;
-    right: -60px;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
+    right: -50px;
 }
 
 .left{
     position: absolute;
-    top: 60px;
+    top: 0;
+    bottom: 0;
+    margin: auto 0;
     left: -60px;
 }
 .top{
